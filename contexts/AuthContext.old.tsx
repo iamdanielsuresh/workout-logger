@@ -137,6 +137,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     return (
         <AuthContext.Provider value={auth}>
+    return (
+        <AuthContext.Provider value={auth}>
             {children}
         </AuthContext.Provider>
     );

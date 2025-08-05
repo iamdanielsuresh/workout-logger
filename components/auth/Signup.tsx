@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { DumbbellIcon } from '../../constants';
 
 const Signup: React.FC = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,10 +20,15 @@ const Signup: React.FC = () => {
             setError('Username must be at least 3 characters long.');
             return;
         }
+        
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
 
         setLoading(true);
         try {
-            await signup(username);
+            await signup(email, password, username);
             navigate('/onboarding');
         } catch (err: any) {
             setError(err.message || 'Failed to create an account.');
@@ -59,6 +66,21 @@ const Signup: React.FC = () => {
                     )}
 
                     <div className="mb-4">
+                        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            className={inputClasses}
+                            id="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
                         <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="username">
                             Username
                         </label>
@@ -69,6 +91,21 @@ const Signup: React.FC = () => {
                             placeholder="Choose a username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    <div className="mb-4">
+                        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="password">
+                            Password
+                        </label>
+                        <input
+                            className={inputClasses}
+                            id="password"
+                            type="password"
+                            placeholder="Choose a password (min 6 characters)"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>

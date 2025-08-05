@@ -72,7 +72,9 @@ export interface UserDetails {
 }
 
 export interface User {
+    id?: string; // Supabase user ID
     username: string;
+    email?: string; // User email for Supabase auth
     details?: UserDetails;
 }
 

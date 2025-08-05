@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { DumbbellIcon } from '../../constants';
 
 const Login: React.FC = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
@@ -15,7 +16,7 @@ const Login: React.FC = () => {
         setError('');
         setLoading(true);
         try {
-            await login(username);
+            await login(email, password);
             navigate('/');
         } catch (err: any) {
             setError(err.message || 'Failed to log in.');
@@ -53,16 +54,31 @@ const Login: React.FC = () => {
                     )}
                     
                     <div className="mb-4">
-                        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="username">
-                            Username
+                        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="email">
+                            Email
                         </label>
                         <input
                             className={inputClasses}
-                            id="username"
-                            type="text"
-                            placeholder="Enter your username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            id="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    <div className="mb-4">
+                        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="password">
+                            Password
+                        </label>
+                        <input
+                            className={inputClasses}
+                            id="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>
@@ -77,7 +93,7 @@ const Login: React.FC = () => {
                         </button>
                     </div>
                      <p className="text-center text-slate-500 text-xs mt-6">
-                        Note: This is a demo. No password required.
+                        Secure authentication powered by Supabase
                     </p>
                 </form>
             </div>
