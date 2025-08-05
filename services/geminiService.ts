@@ -2,11 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GeneratedPlan } from '../types';
 
-if (!import.meta.env.VITE_GEMINI_API_KEY) {
-    throw new Error("VITE_GEMINI_API_KEY environment variable is not set.");
-}
+// Check if API key is available
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const isAIEnabled = !!API_KEY;
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+
+if (isAIEnabled) {
+    ai = new GoogleGenAI({ apiKey: API_KEY });
+}
 
 const workoutPlanSchema = {
   type: Type.OBJECT,
@@ -56,14 +60,18 @@ const workoutPlanSchema = {
 
 
 export const generateWorkoutPlan = async (prompt: string): Promise<GeneratedPlan> => {
+    // Check if AI is enabled
+    if (!isAIEnabled || !ai) {
+        throw new Error("AI features are not available. Please configure the Gemini API key to use AI-powered workout generation.");
+    }
+
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.0-flash-exp",
             contents: `Generate a workout plan based on the following user request: "${prompt}". Ensure the plan is well-structured, safe, and effective.`,
             config: {
                 responseMimeType: "application/json",
                 responseSchema: workoutPlanSchema,
-                thinkingConfig: { thinkingBudget: 0 } // For faster response
             },
         });
         
@@ -72,11 +80,16 @@ export const generateWorkoutPlan = async (prompt: string): Promise<GeneratedPlan
         return plan;
     } catch (error) {
         console.error("Error generating workout plan:", error);
-        throw new Error("Failed to generate a workout plan. The AI model may be busy. Please try again later.");
+        throw new Error("Failed to generate a workout plan. The AI service may be busy. Please try again later.");
     }
 };
 
 export const generateWorkoutInsights = async (context: any): Promise<string> => {
+    // Check if AI is enabled
+    if (!isAIEnabled || !ai) {
+        return "AI insights are not available. Configure the Gemini API key to get personalized workout recommendations.";
+    }
+
     try {
         const prompt = `
 You are an expert fitness coach AI. Analyze the following workout context and provide personalized insights and recommendations for today's session.
@@ -107,11 +120,8 @@ Focus on being practical and actionable rather than generic.
         `;
 
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.0-flash-exp",
             contents: prompt,
-            config: {
-                thinkingConfig: { thinkingBudget: 0 }
-            },
         });
         
         return response.text.trim();
@@ -119,4 +129,9 @@ Focus on being practical and actionable rather than generic.
         console.error("Error generating workout insights:", error);
         return "Ready for your workout! Focus on proper form and progressive overload today.";
     }
+};
+
+// Helper function to check if AI features are available
+export const isAIAvailable = (): boolean => {
+    return isAIEnabled;
 };

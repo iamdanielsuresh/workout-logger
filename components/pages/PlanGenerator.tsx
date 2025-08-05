@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateWorkoutPlan } from '../../services/geminiService';
+import { generateWorkoutPlan, isAIAvailable } from '../../services/geminiService';
 import type { GeneratedPlan } from '../../types';
 import { SparklesIcon } from '../../constants';
 
@@ -36,6 +36,20 @@ const PlanGenerator: React.FC = () => {
             <div className={glassPanelClasses}>
                 <h1 className="text-3xl font-bold text-white mb-2">AI Workout Plan Generator</h1>
                 <p className="text-slate-300 mb-4">Describe your fitness goals, and let our AI create a custom plan for you.</p>
+                
+                {/* Show AI availability status */}
+                {!isAIAvailable() && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-4">
+                        <div className="flex items-center gap-2 text-yellow-400">
+                            <SparklesIcon className="h-5 w-5" />
+                            <span className="font-medium">AI Features Not Available</span>
+                        </div>
+                        <p className="text-yellow-300 text-sm mt-1">
+                            Configure the Gemini API key in environment variables to enable AI-powered workout generation.
+                        </p>
+                    </div>
+                )}
+                
                 <div className="flex flex-col sm:flex-row gap-2 mb-4">
                     <input
                         type="text"
@@ -43,11 +57,11 @@ const PlanGenerator: React.FC = () => {
                         onChange={(e) => setPrompt(e.target.value)}
                         className={inputClasses}
                         placeholder="e.g., 4-day weight loss plan for intermediate"
-                        disabled={loading}
+                        disabled={loading || !isAIAvailable()}
                     />
                     <button
                         onClick={handleGenerate}
-                        disabled={loading || !prompt}
+                        disabled={loading || !prompt || !isAIAvailable()}
                         className={primaryButtonClasses}
                     >
                         {loading ? 'Generating...' : (
