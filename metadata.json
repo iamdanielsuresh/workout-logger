@@ -1,0 +1,5 @@
+{
+  "name": "Gym Weight Log",
+  "description": "A modern, AI-powered application to log your gym sessions, track your progress over time with beautiful charts, and generate personalized workout plans.",
+  "requestFramePermissions": []
+}

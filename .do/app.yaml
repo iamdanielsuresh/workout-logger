@@ -1,0 +1,21 @@
+name: gym-weight-log
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: your-username/gym-weight-log
+    branch: main
+  run_command: npm run build && npm run preview
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 4173
+  env:
+  - key: VITE_SUPABASE_URL
+    value: ${VITE_SUPABASE_URL}
+  - key: VITE_SUPABASE_ANON_KEY
+    value: ${VITE_SUPABASE_ANON_KEY}
+  - key: VITE_GEMINI_API_KEY
+    value: ${VITE_GEMINI_API_KEY}
+  - key: VITE_NODE_ENV
+    value: production
